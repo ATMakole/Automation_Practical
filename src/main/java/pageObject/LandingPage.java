@@ -9,23 +9,65 @@ public class LandingPage {
 	public WebDriver driver;
 	
 	By signIn = By.xpath("//div[@class='container']//div//nav//div//a");
-	By womenMenuOption = By.xpath("//div[@id='center_column']//ul//li[1]//div//div[1]//div//a[1]//img");
+
 	By womenMenuSection = By.xpath("//*[@id='block_top_menu']/ul/li[1]/a");
+	
 	By dressesMenuSection = By.xpath("//*[@id='block_top_menu']/ul/li[2]/a");
+	
 	By tshirtsMenuSection = By.xpath("//*[@id='block_top_menu']/ul/li[3]/a");
-	By search = By.xpath("//*[@id='search_query_top'");
-	By searchButton = By.xpath("//*[@id='searchbox']/button");//*[@id="center_column"]/ul/li/div/div[1]/div/a[1]/img
+	
+	
+	By search = By.xpath("//*[@id='search_query_top']");
+	By searchButton = By.xpath("//div[@id='page']//div//header//div[3]//div//div//form//button");
+	By homeButton = By.xpath("//div[@class='columns-container']//div//div//a");
+	
 	By selectItem = By.xpath("//*[@id='center_column']/ul/li/div/div[1]/div/a[1]/img");
 	By addToCart = By.xpath("//*[@id='center_column']/ul/li/div/div[2]/div[2]/a[1]/span");
-	//By womenCategory = By.xpath("//div[@class='row']//div[6]//ul//li//a[@title='Women']");
+	By tops = By.xpath("//*[@id='block_top_menu']/ul/li[1]/ul/li[1]/a");
+	By dresses = By.xpath("//*[@id='block_top_menu']/ul/li[1]/ul/li[2]/a");
+	By dressesMenu = By.xpath("//*[@id='block_top_menu']/ul/li[2]/a");
 	
+	By casual = By.xpath("//*[@id='block_top_menu']/ul/li[2]/ul/li[1]/a");
+	By evening = By.xpath("//*[@id='block_top_menu']/ul/li[2]/ul/li[2]/a");
+	By summer = By.xpath("//*[@id='block_top_menu']/ul/li[2]/ul/li[3]/a");
+		
 	public LandingPage(WebDriver driver) {
 		this.driver = driver;
 	}
 	
-	public WebElement womenMenuOption() 
+	public WebElement subCasual() 
 	{
-		return driver.findElement(womenMenuOption);
+		return driver.findElement(casual);
+	}
+	
+	public WebElement subEvening() 
+	{
+		return driver.findElement(evening);
+	}
+	
+	public WebElement subSummer() 
+	{
+		return driver.findElement(summer);
+	}
+	
+	public WebElement subTops() 
+	{
+		return driver.findElement(tops);
+	}
+	
+	public WebElement subDresses() 
+	{
+		return driver.findElement(dresses);
+	}
+	
+	public WebElement dressessMenuSection() 
+	{
+		return driver.findElement(womenMenuSection);
+	}
+	
+	public WebElement womenMenuSection() 
+	{
+		return driver.findElement(womenMenuSection);
 	}
 	
 	public WebElement getLogin() 
@@ -56,6 +98,11 @@ public class LandingPage {
 	public WebElement searchButton() 
 	{
 		return driver.findElement(searchButton);
+	}
+	
+	public WebElement homeButton() 
+	{
+		return driver.findElement(homeButton);
 	}
 	
 	public WebElement selectItem() 

@@ -3,6 +3,7 @@ package Assessment;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
@@ -10,96 +11,209 @@ import javax.swing.JOptionPane;
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.testng.annotations.BeforeTest;
 //import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import Resources.base;
+import Resources.getExcelData;
 import pageObject.LandingPage;
 import pageObject.LoginPage;
 import pageObject.ShoppingCardPage;
 
-public class HomePage extends base{
-
-	@Test//(dataProvider="getLoginData")
-	public void basePageNavigation() throws IOException, InterruptedException 
+public class HomePage extends base
+{
+	static Workbook book;
+	static org.apache.poi.ss.usermodel.Sheet sheet;
+	public static String TESTDATA_SHEET_PATH = "C:\\Users\\aaron\\OneDrive\\Documents\\Assessmen_Project\\Assessment\\src\\test\\java\\Resources//TestData.xlsx";
+	
+	@Test
+	public void TC1() throws IOException, InterruptedException 
 	{
+		driver = initializeDriver();
+		driver.get("http://automationpractice.com/"); 
+		LandingPage l = new LandingPage(driver);	
+		driver.close();
+	}
+	
+	@Test
+	public void TC2() throws IOException, InterruptedException 
+	{
+		driver = initializeDriver();
+		driver.get("http://automationpractice.com/"); 
+		LandingPage homePage = new LandingPage(driver);
+		
+		String searchCriteria;
+		searchCriteria = "Blouse,Printed Dress,Printed Chiffon Dress";
+		
+		String[] searchArray = searchCriteria.split(",");
+		
+		for(int i = 0; i < searchArray.length; i++)
+		{
+			homePage.search().sendKeys(searchArray[i]);
+			homePage.searchButton().click();		
+			homePage.homeButton().click();
+			//Adding wait 
+			//Thread.sleep(1000);
+		}
+		driver.close();
+	}
+
+	@Test
+	public void TC3() throws IOException, InterruptedException
+	{		
+		//Call a method that returns Excel test data
+		driver = initializeDriver();
+		driver.get(getLoginData("Sheet3")[0][0].toString());
+		driver.close();
+	}
+	
+	//@Test
+	public void TC4() throws IOException, InterruptedException
+	{
+		Properties prop = new Properties();
+		FileInputStream fis = new FileInputStream("..\\Assessment\\src\\test\\java\\Resources\\data.properties");
+		prop.load(fis);
+		String email = prop.getProperty("email");
+		String password = prop.getProperty("email");
+		
+		//Driver initialize
+		driver = initializeDriver();	
+		driver.get("http://automationpractice.com/"); 
+		LandingPage homePage = new LandingPage(driver);
+		LoginPage loginPage = new LoginPage(driver);
+		
+		//Login page
+		homePage.getLogin().click();
+		loginPage.getEmail().sendKeys(email);
+		loginPage.getPassword().sendKeys(password);
+		loginPage.getSubmit().click();
+		driver.close();
+	}
+
+	@Test
+	public void TC6_Women() throws IOException, InterruptedException 
+	{
+		driver = initializeDriver();	
+		driver.get("http://automationpractice.com/"); 
 		LandingPage l = new LandingPage(driver);
 		LoginPage lp = new LoginPage(driver);
 		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
 		
+		for (int i = 0; i <= 1; i++) 
+		{
+			//Click Menu - Women
+			l.WomenMenuCategory().click();
+			//Instantiate Action Class        
+			Actions actions = new Actions(driver);
+			//Retrieve WebElement 'Women' to perform mouse hover 
+			WebElement menuOption = l.womenMenuSection();
+			//Mouse hover menuOption 'Women' 
+			actions.moveToElement(menuOption).perform();
+			Thread.sleep(2000);
+		
+			if (i==0) {
+				//Tops
+				l.subTops().click();
+			} else {
+				//Dresses
+				l.subDresses().click();
+			}
+		}		
+		
+		driver.close();
+	}
+	
+	@Test
+	public void TC6_Dresses() throws IOException, InterruptedException 
+	{
 		driver = initializeDriver();	
 		driver.get("http://automationpractice.com/"); 
+		LandingPage l = new LandingPage(driver);
+		LoginPage lp = new LoginPage(driver);
+		
+		for (int i = 0; i <= 2; i++) 
+		{
+			//Click Menu - Dresses
+			l.WomenMenuCategory().click();
+			//Instantiate Action Class        
+			Actions actions1 = new Actions(driver);
+			//Retrieve WebElement 'Women' to perform mouse hover 
+			WebElement menuOption1 = l.dressessMenuSection();
+			//Mouse hover menuOption 'Women' 
+			actions1.moveToElement(menuOption1).perform();
+			Thread.sleep(2000);
+			
+			if (i == 0) 
+			{
+				l.subCasual().click();
+			} 
+			else if(i == 2) 
+			{
+				l.subEvening().click();	
+			}
+			else
+			{
+				l.subSummer().click();
+			}
+		}
+	}
+	
+	@Test
+	public void TC6_Tshirts() throws IOException, InterruptedException 
+	{
+		driver = initializeDriver();	
+		driver.get("http://automationpractice.com/"); 
+		LandingPage l = new LandingPage(driver);
+		LoginPage lp = new LoginPage(driver);
+		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
+		
+		//Click Menu - T-shirts
+		l.WomenMenuCategory().click();
+		//Instantiate Action Class        
+		Actions actions3 = new Actions(driver);
+		//Retrieve WebElement 'Women' to perform mouse hover 
+		WebElement menuOption3 = l.tshirtsMenuCategory();
+		//Mouse hover menuOption 'Women' 
+		actions3.moveToElement(menuOption3).perform();
+		Thread.sleep(2000);
+		
+		driver.close();
+	}
+	
+	//@Test
+	public void TC5() throws IOException, InterruptedException
+	{
+		driver = initializeDriver();	
+		driver.get("http://automationpractice.com/"); 
+		LandingPage l = new LandingPage(driver);
+		LoginPage lp = new LoginPage(driver);
+		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
 		
 		//Login page
-		l.getLogin().click();
-		lp.getEmail().sendKeys("Aaron.Makole@gmail.com");
-		lp.getPassword().sendKeys("Bells@298");
-		lp.getSubmit().click();
+		//l.getLogin().click();
+		//lp.getEmail().sendKeys("Aaron.Makole@gmail.com");
+		//lp.getPassword().sendKeys("Bells@298");
+		//lp.getSubmit().click();
 		
 		//Click Menu 
 		l.WomenMenuCategory().click();
-		
-		
-			
 		//Instantiate Action Class        
 		Actions actions = new Actions(driver);
 		//Retrieve WebElement 'Women' to perform mouse hover 
-		WebElement menuOption = driver.findElement(By.xpath("//div[@id='center_column']//ul//li[1]//div//div[1]//div//a[1]//img"));
+		WebElement menuOption = l.womenMenuSection();
 		//Mouse hover menuOption 'Women' 
-		actions.moveToElement(menuOption).perform();
-				
+		actions.moveToElement(menuOption).perform();	
+		//driver.findElement(By.xpath("//div[@class='product-container']//div[2]//div[@class='button-container']//a[@title='Add to cart']")).click();
+		Thread.sleep(2000);	
 		
-		shoppingCard.
-		
-				driver.findElement(By.xpath("//div[@class='product-container']//div[2]//div[@class='button-container']//a[@title='Add to cart']")).click();
-								
-				
-	    		driver.findElement(By.xpath("//*[@id='layer_cart']/div[1]/div[2]/div[4]/a/span")).click();
-				driver.findElement(By.xpath("//*[@id='cart_quantity_up_1_1_0_417153']/span/i")).click();
-				driver.findElement(By.xpath("//*[@id='cart_quantity_up_1_1_0_417153']/span/i")).click();
-							
-				//Adding wait 
-				Thread.sleep(9000);
-				driver.findElement(By.xpath("//*[@id='product_price_1_1_417153']/span")); //*[@id="total_price"] //*[@id="total_price"]
-				int quantity = Integer.parseInt(driver.findElement(By.xpath("//*[@id='product_1_1_0_417153']/td[5]/input[2]")).getText());
-				
-				//Adding wait 
-				Thread.sleep(9000);
-				driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-				String heading = driver.findElement(By.xpath("//*[@id='product_price_1_1_417153']/span")).getText();
-				
-				//Adding wait 
-				Thread.sleep(9000);
-				double d=Double.parseDouble(heading.substring(1, heading.length()));System.out.println(d);
-				String total = driver.findElement(By.xpath("//*[@id='total_product_price_1_1_417153']")).getText();
-				
-				JOptionPane jop = new JOptionPane();
-				//JOptionPane.showMessageDialog(Frame, "Eggs are not supposed to be green.");
-				
-				//if((d*3) == calculate(d, quantity))
-				////System.out.println(d);
-				// else
-					//System.out.println(total);
-				
-				getLoginData("Sheet1");
-				
-				searchArray();
-				
-		/*
-		l.WomenMenuOption().click();
-		l.dressesMenuOption().click();
-		l.tshirtsMenuOption().click();
-			
-		l.search().sendKeys("Faded Short Sleeve T-shirt");
-		l.searchButton().click();
-		l.selectItem().click();
-		l.addItem().click();*/
-		//driver.close();
+		driver.close();
 	}
 	
 	public double calculate(double unitPrice, int quantity)
@@ -127,9 +241,6 @@ public class HomePage extends base{
 		
 		return data;
 	}
-	static Workbook book;
-	static org.apache.poi.ss.usermodel.Sheet sheet;
-	public static String TESTDATA_SHEET_PATH = "C:\\Users\\aaron\\OneDrive\\Documents\\Assessmet\\TestData\\TestData.xlsx";
 	
 	@DataProvider
 	public static Object[][] getLoginData(String sheetName) 
@@ -166,9 +277,9 @@ public class HomePage extends base{
 			for (int j = 0; j < sheet.getRow(0).getLastCellNum(); j++) 
 			{
 				data[i][j] = sheet.getRow(i+1).getCell(j).toString();
-				System.out.print(data[i][j] + "\t");
+				//System.out.print(data[i][j] + "\t");
 			}
-			System.out.print("\n");
+			//System.out.print("\n");
 		}
 		
 		return data;
@@ -188,38 +299,9 @@ public class HomePage extends base{
 			driver.findElement(By.xpath("//div[@class='columns-container']//div//div//a")).click();
 			
 			//Adding wait 
-			Thread.sleep(9000);
+			Thread.sleep(2000);
 			System.out.println(searchArray[i] + "\t");
 			//Assert.assertEquals(searchArray[i], searchArray[i]);
-			
 		}
-	}
-	
-	public void genericNav(WebDriver driver,Object obj, String url, String subUrl)
-	{
-		
-		//Instantiate Action Class        
-        Actions actions = new Actions(driver);
-        //Retrieve WebElement 'Women' to perform mouse hover 
-    	WebElement menuOption = driver.findElement(By.xpath("//div[@id='center_column']//ul//li[1]//div//div[1]//div//a[1]//img"));
-    	//Mouse hover menuOption 'Women' 
-    	actions.moveToElement(menuOption).perform();
-    	
-    	
-	}
-	
+	}	
 }
-
-/*
-public static Ranorex.WebElement getEle(string path, int timeout){
-			Element ele = null;
-			Host.Local.TryFindSingle(path, timeout, out ele);
-			try{WebElement we = new WebElement(ele);return we;}
-			catch{
-					if(path.Equals("path")) {
-						Report.Log(ReportLevel.Info, "Form not found, waiting for form to load.");
-					}else{
-						Report.Log(ReportLevel.Warn, "Not found: "+path);
-					}
-			}
-*/

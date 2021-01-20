@@ -8,14 +8,12 @@ public class ShoppingCardPage
 {
 	public WebDriver driver;
 	
+	By addToCart = By.xpath("//*[@id='center_column']/ul/li/div/div[2]/div[2]/a[1]/span");
+	
 	public ShoppingCardPage(WebDriver driver) 
 	{
 		this.driver = driver;
 	}
-	/*
-	public WebElement getEmail() 
-	{
-		return driver.findElement(email);
-	}
-*/
+	
+	
 }

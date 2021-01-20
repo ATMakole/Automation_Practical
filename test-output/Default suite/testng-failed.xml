@@ -5,7 +5,7 @@
     <classes>
       <class name="Assessment.HomePage">
         <methods>
-          <include name="basePageNavigation"/>
+          <include name="TC6_Dresses"/>
         </methods>
       </class> <!-- Assessment.HomePage -->
     </classes>
