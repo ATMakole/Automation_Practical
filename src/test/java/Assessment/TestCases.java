@@ -16,6 +16,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.ClickAction;
 import org.testng.annotations.BeforeTest;
 //import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -23,22 +24,23 @@ import org.testng.annotations.Test;
 
 import Resources.base;
 import Resources.getExcelData;
+import bsh.Parser;
 import pageObject.LandingPage;
 import pageObject.LoginPage;
 import pageObject.ShoppingCardPage;
 
-public class HomePage extends base
+public class TestCases extends base
 {
 	static Workbook book;
 	static org.apache.poi.ss.usermodel.Sheet sheet;
-	public static String TESTDATA_SHEET_PATH = "C:\\Users\\aaron\\OneDrive\\Documents\\Assessmen_Project\\Assessment\\src\\test\\java\\Resources//TestData.xlsx";
+	public static String TESTDATA_SHEET_PATH = "..\\Assessment\\src\\test\\java\\Resources//TestData.xlsx";
 	
 	@Test
 	public void TC1() throws IOException, InterruptedException 
 	{
 		driver = initializeDriver();
 		driver.get("http://automationpractice.com/"); 
-		LandingPage l = new LandingPage(driver);	
+		//LandingPage l = new LandingPage(driver);	
 		driver.close();
 	}
 	
@@ -59,8 +61,6 @@ public class HomePage extends base
 			homePage.search().sendKeys(searchArray[i]);
 			homePage.searchButton().click();		
 			homePage.homeButton().click();
-			//Adding wait 
-			//Thread.sleep(1000);
 		}
 		driver.close();
 	}
@@ -74,7 +74,7 @@ public class HomePage extends base
 		driver.close();
 	}
 	
-	//@Test
+	@Test
 	public void TC4() throws IOException, InterruptedException
 	{
 		Properties prop = new Properties();
@@ -98,35 +98,68 @@ public class HomePage extends base
 	}
 
 	@Test
+	public void TC5() throws IOException, InterruptedException
+	{
+		driver = initializeDriver();	
+		driver.get("http://automationpractice.com/"); 
+		LandingPage LandingPage = new LandingPage(driver);
+		LoginPage LoginPage = new LoginPage(driver);
+		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
+		
+		//Login page
+		LandingPage.getLogin().click();
+		LoginPage.getEmail().sendKeys("Aaron.Makole@gmail.com");
+		LoginPage.getPassword().sendKeys("Bells@298");
+		LoginPage.getSubmit().click();
+		
+		//Search item
+		LandingPage.search().sendKeys("Printed Dress");
+		LandingPage.searchButton().click();	
+		
+		shoppingCard.selectItem().click();
+		//Increment quantity
+		shoppingCard.increment().click();
+		//Add to cart
+		shoppingCard.addToCart().click();
+		//Proceed
+		shoppingCard.proceed().click();
+		
+		String temp1 = shoppingCard.getTotalPrice().getText();
+		double totalPrice = Double.valueOf(temp1.substring(1, temp1.length()));
+		
+		String temp3 = shoppingCard.getUnitPrice().getText();
+		double unitPrice = Double.valueOf(temp3.substring(1, temp3.length()));
+	
+		//Calculate
+		int quantity = (int)((totalPrice - 2)/unitPrice);
+		
+		String result = "$" + Double.toString(calculate(unitPrice, quantity));
+		
+		//Comparing results to expected result
+		Assert.assertEquals(temp1, result);
+		
+		driver.close();
+	}
+	
+	@Test
 	public void TC6_Women() throws IOException, InterruptedException 
 	{
 		driver = initializeDriver();	
 		driver.get("http://automationpractice.com/"); 
-		LandingPage l = new LandingPage(driver);
-		LoginPage lp = new LoginPage(driver);
-		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
+		LandingPage LandingPage = new LandingPage(driver);	
 		
 		for (int i = 0; i <= 1; i++) 
 		{
 			//Click Menu - Women
-			l.WomenMenuCategory().click();
+			LandingPage.WomenMenuCategory().click();
 			//Instantiate Action Class        
 			Actions actions = new Actions(driver);
 			//Retrieve WebElement 'Women' to perform mouse hover 
-			WebElement menuOption = l.womenMenuSection();
+			WebElement menuOption = LandingPage.womenMenuSection();
 			//Mouse hover menuOption 'Women' 
 			actions.moveToElement(menuOption).perform();
 			Thread.sleep(2000);
-		
-			if (i==0) {
-				//Tops
-				l.subTops().click();
-			} else {
-				//Dresses
-				l.subDresses().click();
-			}
 		}		
-		
 		driver.close();
 	}
 	
@@ -135,34 +168,20 @@ public class HomePage extends base
 	{
 		driver = initializeDriver();	
 		driver.get("http://automationpractice.com/"); 
-		LandingPage l = new LandingPage(driver);
-		LoginPage lp = new LoginPage(driver);
+		LandingPage LandingPage = new LandingPage(driver);
 		
 		for (int i = 0; i <= 2; i++) 
 		{
 			//Click Menu - Dresses
-			l.WomenMenuCategory().click();
+			LandingPage.WomenMenuCategory().click();
 			//Instantiate Action Class        
 			Actions actions1 = new Actions(driver);
 			//Retrieve WebElement 'Women' to perform mouse hover 
-			WebElement menuOption1 = l.dressessMenuSection();
+			WebElement menuOption1 = LandingPage.dressessMenuSection();
 			//Mouse hover menuOption 'Women' 
 			actions1.moveToElement(menuOption1).perform();
-			Thread.sleep(2000);
-			
-			if (i == 0) 
-			{
-				l.subCasual().click();
-			} 
-			else if(i == 2) 
-			{
-				l.subEvening().click();	
-			}
-			else
-			{
-				l.subSummer().click();
-			}
 		}
+		driver.close();
 	}
 	
 	@Test
@@ -170,77 +189,20 @@ public class HomePage extends base
 	{
 		driver = initializeDriver();	
 		driver.get("http://automationpractice.com/"); 
-		LandingPage l = new LandingPage(driver);
-		LoginPage lp = new LoginPage(driver);
-		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
+		LandingPage LandingPage = new LandingPage(driver);
 		
 		//Click Menu - T-shirts
-		l.WomenMenuCategory().click();
+		LandingPage.WomenMenuCategory().click();
 		//Instantiate Action Class        
 		Actions actions3 = new Actions(driver);
 		//Retrieve WebElement 'Women' to perform mouse hover 
-		WebElement menuOption3 = l.tshirtsMenuCategory();
+		WebElement menuOption3 = LandingPage.tshirtsMenuCategory();
 		//Mouse hover menuOption 'Women' 
 		actions3.moveToElement(menuOption3).perform();
-		Thread.sleep(2000);
 		
 		driver.close();
 	}
-	
-	//@Test
-	public void TC5() throws IOException, InterruptedException
-	{
-		driver = initializeDriver();	
-		driver.get("http://automationpractice.com/"); 
-		LandingPage l = new LandingPage(driver);
-		LoginPage lp = new LoginPage(driver);
-		ShoppingCardPage shoppingCard = new ShoppingCardPage(driver);	
-		
-		//Login page
-		//l.getLogin().click();
-		//lp.getEmail().sendKeys("Aaron.Makole@gmail.com");
-		//lp.getPassword().sendKeys("Bells@298");
-		//lp.getSubmit().click();
-		
-		//Click Menu 
-		l.WomenMenuCategory().click();
-		//Instantiate Action Class        
-		Actions actions = new Actions(driver);
-		//Retrieve WebElement 'Women' to perform mouse hover 
-		WebElement menuOption = l.womenMenuSection();
-		//Mouse hover menuOption 'Women' 
-		actions.moveToElement(menuOption).perform();	
-		//driver.findElement(By.xpath("//div[@class='product-container']//div[2]//div[@class='button-container']//a[@title='Add to cart']")).click();
-		Thread.sleep(2000);	
-		
-		driver.close();
-	}
-	
-	public double calculate(double unitPrice, int quantity)
-	{
-		return (unitPrice * quantity) + 2;
-	}
-	
-	@DataProvider
-	public Object[][] getData() 
-	{
-		Object[][] data = new Object[2][2];
-		//0th row
-		data[0][0] = "col 0";
-		data[0][1] = "col 1";
-		data[0][2] = "col 2";
-		
-		//1st row
-		data[1][0] = "col 0";
-		data[1][1] = "col 1";
-		data[1][2] = "col 2";
-		
-		
-		//JavascriptExecutor js = (JavascriptExecutor)driver;
-		//js.
-		
-		return data;
-	}
+
 	
 	@DataProvider
 	public static Object[][] getLoginData(String sheetName) 
@@ -253,7 +215,7 @@ public class HomePage extends base
 		catch (FileNotFoundException e) 
 		{
 			
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		try 
@@ -276,10 +238,9 @@ public class HomePage extends base
 		{
 			for (int j = 0; j < sheet.getRow(0).getLastCellNum(); j++) 
 			{
+				//Coping data to array[][]
 				data[i][j] = sheet.getRow(i+1).getCell(j).toString();
-				//System.out.print(data[i][j] + "\t");
 			}
-			//System.out.print("\n");
 		}
 		
 		return data;
@@ -304,4 +265,10 @@ public class HomePage extends base
 			//Assert.assertEquals(searchArray[i], searchArray[i]);
 		}
 	}	
+
+	public double calculate(double unitPrice, int quantity)
+	{
+		return (unitPrice * 2 + quantity);
+	}
 }
+
